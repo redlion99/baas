@@ -3,7 +3,7 @@
 <head>
         
         <title>Demo Chat</title>
-
+    <meta http-equiv=Content-Type content="text/html;charset=utf-8">
         <link href="bootstrap.css" rel="stylesheet">
 
 	<style>
@@ -32,18 +32,22 @@
 		var socket =  io.connect('http://localhost:9979?username=jacky');
 
 		socket.on('connect', function() {
-		    socket.emit('login',JSON.stringify({username:'a',password:'b'}),function(data,a,c,d){
+		    socket.emit('login',{username:'a',password:'b'},function(data,a,c,d){
 		        console.log(data);
-		        console.log(d);
-
+		        socket.emit('chat:join',{room:'abc'},function(data){
+		            console.log(data);
+		        });
 		    });
 			output('<span class="connect-msg">Client has connected to the server!</span>');
 		});
 		
-		socket.on('chatevent', function(data) {
-			output('<span class="username-msg">' + data.userName + ':</span> ' + data.message);
+		socket.on('chat:message', function(data) {
+			output('<span class="username-msg">' + data.user.displayName + ':</span> ' + data.message);
 		});
-		
+
+		socket.on('user:present', function(user,room) {
+			output('<span class="username-msg">' + user.displayName + ':</span> 加入了。' );
+		});
 		socket.on('disconnect', function() {
 			output('<span class="disconnect-msg">The client has disconnected!</span>');
 		});
@@ -65,8 +69,10 @@
                         // via Configuration.jsonTypeFieldName property
                         
                         var jsonObject = {userName: userName, 
-                                          message: message};
-                        socket.emit('chatevent', jsonObject);
+                                          message: message,room:'abc'};
+                        socket.emit('chat:message', jsonObject,function(data){
+                            console.log(data);
+                        });
 		}
 		
 		function output(message) {

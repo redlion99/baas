@@ -2,6 +2,7 @@ package com.rapple.baas.common.io;
 
 import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.ConnectListener;
+import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.corundumstudio.socketio.store.RedissonStoreFactory;
 import com.corundumstudio.socketio.store.StoreFactory;
 import org.slf4j.Logger;
@@ -37,6 +38,15 @@ public class SocketIOServerLauncher {
                 String username=client.getHandshakeData().getSingleUrlParam("username");
                 client.set("username",username);
                 client.joinRoom("/user/private/"+username);
+            }
+        });
+
+        server.addDisconnectListener(new DisconnectListener() {
+            @Override
+            public void onDisconnect(SocketIOClient client) {
+                for(String room:client.getAllRooms()){
+                    client.getNamespace().getRoomOperations(room).sendEvent("user:leave",client.get("username"),room);
+                }
             }
         });
     }
