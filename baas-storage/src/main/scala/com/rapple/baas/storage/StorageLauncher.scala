@@ -10,7 +10,7 @@ import org.redisson.{Config, Redisson}
  */
 trait StorageLauncher {
   def start()(implicit ctx:ActorSystem,server:SocketIOServer): Unit ={
-    val config= Config
+    val config= new Config
     val redisson: Redisson=Redisson.create(config)
     val eventActor=ctx.actorOf(Props(new StorageActor(redisson)),"storage")
   }

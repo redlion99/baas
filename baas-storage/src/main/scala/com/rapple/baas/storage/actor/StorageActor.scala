@@ -18,6 +18,7 @@ class StorageActor(redisson: Redisson)  extends Actor{
   override def receive: Receive = {
     case InstantMessageSave(roomId:String,message:InstantMessage) =>
       val collection=new EntityCollection[InstantMessage](redisson,classOf[InstantMessage],roomId)
+      implicit val ec=context.dispatcher
       val future= Future{
         collection.append(message)
       }

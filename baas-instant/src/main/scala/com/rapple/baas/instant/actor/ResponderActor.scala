@@ -16,4 +16,10 @@ abstract class ResponderActor extends Actor{
   val timeoutMessenger=context.system.scheduler.scheduleOnce(10 seconds){
     self ! Timeout("timeout")
   }
+
+
+  override def postStop(): Unit = {
+    timeoutMessenger.cancel()
+  }
+
 }
