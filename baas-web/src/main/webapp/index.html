@@ -24,19 +24,36 @@
 	<script src="js/socket.io/socket.io.js"></script>
         <script src="js/moment.min.js"></script>
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="js/chat.js"></script>
 	
 	<script>
+var socket,username,room,botChat;
+$(document).ready(function(){
+        var username = qs.username||'jacky';
+        room=qs.room||'abc';
+        botChat=(room=='bot')
 
-                var userName = 'user' + Math.floor((Math.random()*1000)+1);
-
-		var socket =  io.connect('http://localhost:9979?username=jacky');
+		socket =  io.connect('http://localhost:9979?username='+username);
 
 		socket.on('connect', function() {
 		    socket.emit('login',{username:'a',password:'b'},function(data,a,c,d){
-		        console.log(data);
-		        socket.emit('chat:join',{room:'abc'},function(data){
-		            console.log(data);
-		        });
+		        if(botChat){
+		            socket.emit('bot:start',{room:room},function(data){
+		                room=data.room;
+                    });
+
+		        }else{
+		            socket.emit('chat:join',{room:room},function(data){
+                        socket.emit('chat:history',{room:room},function(data){
+                            for(var i=0;i<data.messages.length;i++){
+                                var msg=data.messages[i];
+                                output('<span class="username-msg">' + msg.from.displayName + ':</span> ' + msg.content,msg.sendTime);
+                            }
+                        });
+                    });
+
+		        }
+
 		    });
 			output('<span class="connect-msg">Client has connected to the server!</span>');
 		});
@@ -51,7 +68,7 @@
 		socket.on('disconnect', function() {
 			output('<span class="disconnect-msg">The client has disconnected!</span>');
 		});
-
+});
                 function sendDisconnect() {
                         socket.disconnect();
                 }
@@ -60,27 +77,31 @@
                         var message = $('#msg').val();
                         $('#msg').val('');
                         
-                        // don't forget to define type field '@class' 
-                        // it should equals to class name which used 
-                        // to deserialize object on server side
-                        // via ...addJsonObjectListener() method
-                        //
-                        // TIP: you can customize type name field
-                        // via Configuration.jsonTypeFieldName property
-                        
-                        var jsonObject = {userName: userName, 
-                                          message: message,room:'abc'};
-                        socket.emit('chat:message', jsonObject,function(data){
-                            console.log(data);
-                        });
+                        var jsonObject = {username: username,
+                                          message: message,room:room};
+                        if(botChat){
+                            socket.emit('bot:message', jsonObject,function(data){
+                                console.log(data);
+                            });
+                        }else{
+                            socket.emit('chat:message', jsonObject,function(data){
+                                console.log(data);
+                            });
+                        }
+
 		}
 		
-		function output(message) {
-                        var currentTime = "<span class='time'>" +  moment().format('HH:mm:ss.SSS') + "</span>";
-                        var element = $("<div>" + currentTime + " " + message + "</div>");
+		function output(message,sendTime) {
+		    if(!sendTime)
+		        sendTime=new Date();
+		    else
+		        sendTime=new Date(sendTime);
+
+            var currentTime = "<span class='time'>" +  moment(sendTime).format('HH:mm:ss.SSS') + "</span>";
+            var element = $("<div>" + currentTime + " " + message + "</div>");
 			$('#console').prepend(element);
 		}
-		
+
 	</script>
 </head>
 

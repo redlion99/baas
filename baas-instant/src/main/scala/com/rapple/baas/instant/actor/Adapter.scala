@@ -26,10 +26,7 @@ class Adapter(eventActor:ActorRef ,server: SocketIOServer) extends Actor{
         eventName=>
           server.addEventListener(eventName,classOf[java.util.HashMap[String,AnyRef]],new DataListener[java.util.HashMap[String,AnyRef]]{
             override def onData(client: SocketIOClient, data: java.util.HashMap[String,AnyRef], ackSender: AckRequest): Unit = {
-              //val input=objectMapper.readValue(data,classOf[java.util.HashMap[String,AnyRef]]).asScala.toMap
-              val input=data.asScala.toMap
-              val userId=client.get[String]("username")
-              val msg=UserInput(eventName,input,new User(userId,userId))
+
 
               val responder=context.actorOf(Props(new ResponderActor {
                 override def receive: Receive = {
@@ -65,7 +62,7 @@ class Adapter(eventActor:ActorRef ,server: SocketIOServer) extends Actor{
                       case Success(x) =>
                       case _ =>
                     }
-                  case RoomMessage(roomName,data) =>
+                  case RoomEvent(roomName,data) =>
                     val future=Future{
                       client.getNamespace().getRoomOperations(roomName).sendEvent("chat:message",data.asJava)
                     }
@@ -81,7 +78,7 @@ class Adapter(eventActor:ActorRef ,server: SocketIOServer) extends Actor{
                   /* quit operations */
                   case Done(str)=>
                     context.stop(self)
-                  case Timeout(str)=>
+                  case RespondTimeout(str)=>
                     ackSender.sendAckData(str)
                     context.stop(self)
                   case _ => ackSender.sendAckData("")
@@ -89,6 +86,12 @@ class Adapter(eventActor:ActorRef ,server: SocketIOServer) extends Actor{
                 }
               }),eventName)
 
+              //forward the input message to event actor
+              //val input=objectMapper.readValue(data,classOf[java.util.HashMap[String,AnyRef]]).asScala.toMap
+              val input=data.asScala.toMap
+              val userId=client.get[String]("username")
+              //TODO: get user information
+              val msg=UserInput(eventName,input,new User(userId,userId))
               eventActor.tell(msg,responder)
             }
           })

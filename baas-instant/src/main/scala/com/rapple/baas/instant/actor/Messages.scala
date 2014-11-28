@@ -1,7 +1,9 @@
 package com.rapple.baas.instant.actor
 
+import java.util
+
 import com.corundumstudio.socketio.{AckRequest, SocketIOClient}
-import com.rapple.baas.common.dto.User
+import com.rapple.baas.common.dto.{Room, InstantMessage, User}
 
 /**
  * Created by libin on 14-11-22.
@@ -18,9 +20,19 @@ object Messages {
   case class ForwardEvents(events: List[String])
   case class ClientSet(key:String,value:AnyRef)
   case class RoomBroadcast(namespace:String,roomName:String,event:String,data:Map[String,AnyRef])
-  case class RoomMessage(roomName:String,data:Map[String,AnyRef])
+  case class RoomEvent(roomName:String,data:Map[String,AnyRef])
   case class RoomJoin(roomName:String)
   case class RoomLeave(roomName:String)
+  case class RoomFetchHistory(roomName:String)
+  case class RoomMessages(roomName:String,data:util.Collection[InstantMessage])
   case class UserPresent(roomName:String,user:User)
-  case class Timeout(t:String)
+  case class RespondTimeout(t:String)
+
+
+
+  case class InstantMessageSave(room:String,message:InstantMessage)
+  case class InstantMessageFetch(room:String)
+
+  case class BotConversationCreate(botName:String)
+  case class BotRoomCreated(room:Room)
 }

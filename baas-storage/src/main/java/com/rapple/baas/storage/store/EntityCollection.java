@@ -1,11 +1,8 @@
 package com.rapple.baas.storage.store;
 
-import com.rapple.baas.common.dto.InstantMessage;
-import com.rapple.baas.common.dto.Room;
 import org.redisson.Redisson;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by libin on 14-11-25.
@@ -18,8 +15,27 @@ public class EntityCollection<T> implements ICollection<T>{
     }
 
     public List<T> collection(){
-        return list;
+        return head(0);
     }
+
+    public List<T> head(int page){
+        if(page<0)
+            page=0;
+        int size=list.size();
+        int from=Math.min(size,page*50);
+        int until=Math.min(size,(page+1)*50);
+        return list.subList(from,until);
+    }
+
+    public List<T> tail(int page){
+        if(page<0)
+            page=0;
+        int size=list.size();
+        int until=size-Math.min(size,page*50);
+        int from=size-Math.min(size,(page+1)*50);
+        return list.subList(from,until);
+    }
+
 
     public void append(T instance){
         list.add(instance);

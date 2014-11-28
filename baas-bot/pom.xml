@@ -9,34 +9,38 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>baas-app</artifactId>
+    <artifactId>baas-bot</artifactId>
+    <properties>
+
+        <lucene.version>4.7.0</lucene.version>
+    </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-common</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.rapple.baas</groupId>
             <artifactId>baas-instant</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.rapple.baas</groupId>
-            <artifactId>baas-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.rapple.baas</groupId>
-            <artifactId>baas-push</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.rapple.baas</groupId>
-            <artifactId>baas-bot</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-cluster_2.10</artifactId>
-            <version>${akka.version}</version>
-        </dependency>
+
     </dependencies>
+
+
 
 </project>

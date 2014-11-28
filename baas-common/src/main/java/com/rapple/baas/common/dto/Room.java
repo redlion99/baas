@@ -9,7 +9,15 @@ import java.util.UUID;
 public class Room {
     private UUID id=UUID.randomUUID();
     private String name;
-    private String path;
+    private String domain;
+
+    public Room() {
+    }
+
+    public Room(String name) {
+        this.name = name;
+        this.domain = "/public";
+    }
 
     public UUID getId() {
         return id;
@@ -24,10 +32,11 @@ public class Room {
     }
 
     public String getPath() {
-        return path;
+        return domain+"/"+id.toString();
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
+
 }

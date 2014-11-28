@@ -13,6 +13,13 @@
     <artifactId>baas-web</artifactId>
 
 
+    <dependencies>
+        <dependency>
+            <groupId>com.rapple.baas</groupId>
+            <artifactId>baas-app</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>

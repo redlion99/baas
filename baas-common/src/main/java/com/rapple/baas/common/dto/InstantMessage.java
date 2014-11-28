@@ -11,6 +11,20 @@ public class InstantMessage {
     private String content;
     private Date sendTime=new Date();
 
+    public InstantMessage() {
+    }
+
+    public InstantMessage(User from, String content) {
+        this.from = from;
+        this.content = content;
+    }
+
+    public InstantMessage(User from, User to, String content) {
+        this.from = from;
+        this.to = to;
+        this.content = content;
+    }
+
     public User getFrom() {
         return from;
     }

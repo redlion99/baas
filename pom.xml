@@ -15,6 +15,7 @@
         <module>baas-push</module>
         <module>baas-app</module>
         <module>baas-web</module>
+        <module>baas-bot</module>
     </modules>
 
     <properties>

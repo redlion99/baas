@@ -3,6 +3,7 @@ package com.rapple.baas.app
 import akka.actor.{ActorLogging, Actor, Props, ActorSystem}
 import akka.cluster.Cluster
 import akka.cluster.ClusterEvent._
+import com.rapple.baas.bot.BotBackendLauncher
 import com.rapple.baas.common.actor.ActorFactory
 import com.rapple.baas.common.io.SocketIOServerLauncher
 import com.rapple.baas.instant.InstantLauncher
@@ -13,11 +14,23 @@ import com.rapple.baas.push.PushLauncher
  */
 trait BaasBoot {
   def startLaunchers(system:ActorSystem): Unit ={
+
+    SpringContext.start()
+    SpringContext.getBean(classOf[BotBackendLauncher]).start()
+
+
     val socketIOLauncher= new SocketIOServerLauncher
     implicit val server=socketIOLauncher.getServer
     socketIOLauncher.start()
+
+
+
+
+
     InstantLauncher.start()
     PushLauncher.start()
+
+
   }
   //System.setProperty("akka.remote.netty.tcp.port", "2551")
   implicit val actorSystem:ActorSystem=ActorFactory.getActorSystem
